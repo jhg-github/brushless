@@ -92,6 +92,8 @@ void Error_Handler(void);
 #define EN3_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
+#define DEBUG_PIN_Pin GPIO_PIN_7
+#define DEBUG_PIN_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

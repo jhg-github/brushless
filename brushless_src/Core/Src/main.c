@@ -146,27 +146,43 @@ void step6(){
 //	while(1){}
 //}
 
-//void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-//	HAL_GPIO_WritePin(DEBUG_PIN_GPIO_Port, DEBUG_PIN_Pin, GPIO_PIN_RESET);
-//	__NOP();
-//}
+typedef void (*step_function)(void);
 
-#define N_SAMPLES (10U)
+#define N_REVS (2U)
+#define N_STEP (6U)
+#define N_SAMPLES_PER_STEP (20U)
+#define N_RECORD_SAMPLES (N_REVS*N_STEP*N_SAMPLES_PER_STEP)
 __IO uint16_t adc_array[3];
-__IO uint16_t record_array[3*N_SAMPLES];
+__IO uint16_t record_phase_a[N_RECORD_SAMPLES];
+__IO uint16_t record_phase_b[N_RECORD_SAMPLES];
+__IO uint16_t record_phase_c[N_RECORD_SAMPLES];
+__IO uint8_t record_step[N_RECORD_SAMPLES];
 __IO uint16_t record_index;
+__IO uint8_t step_index;
+__IO uint8_t sample_step;
 
 void DMA1_Channel1_IRQHandler(void)
 {
 	HAL_GPIO_WritePin(DEBUG_PIN_GPIO_Port, DEBUG_PIN_Pin, GPIO_PIN_SET);
 
-	record_array[record_index++] = adc_array[0];
-	record_array[record_index++] = adc_array[1];
-	record_array[record_index++] = adc_array[2];
+	record_phase_a[record_index] = adc_array[0];
+	record_phase_b[record_index] = adc_array[1];
+	record_phase_c[record_index] = adc_array[2];
+	record_step[record_index] = step_index;
 
-	if(record_index >= N_SAMPLES*3){
+	record_index++;
+	if(record_index >= N_RECORD_SAMPLES){
 		HAL_TIM_Base_Stop(&htim1);
 		reset_all();
+	}
+
+	sample_step++;
+	if(sample_step >=N_SAMPLES_PER_STEP){
+		sample_step = 0;
+		step_index++;
+		if(step_index >=N_STEP){
+			step_index=0;
+		}
 	}
 
 	DMA1->IFCR = DMA_IFCR_CTCIF1;
@@ -177,6 +193,8 @@ void test_adc(){
 	uint32_t delay = 1;
 
 	record_index = 0;
+	sample_step =0;
+	step_index = 0;
 	reset_all();
 
 	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
@@ -335,7 +353,7 @@ static void MX_ADC1_Init(void)
   sConfig.Channel = ADC_CHANNEL_9;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_19CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_181CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -385,7 +403,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 7199;
+  htim1.Init.Period = 3599;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

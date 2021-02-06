@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -160,6 +160,7 @@ __IO uint8_t record_step[N_RECORD_SAMPLES];
 __IO uint16_t record_index;
 __IO uint8_t step_index;
 __IO uint8_t sample_step;
+__IO bool recording;
 
 void DMA1_Channel1_IRQHandler(void)
 {
@@ -174,6 +175,7 @@ void DMA1_Channel1_IRQHandler(void)
 	if(record_index >= N_RECORD_SAMPLES){
 		HAL_TIM_Base_Stop(&htim1);
 		reset_all();
+		recording = false;
 	}
 
 	sample_step++;
@@ -191,6 +193,7 @@ void DMA1_Channel1_IRQHandler(void)
 }
 void test_adc(){
 	uint32_t delay = 1;
+	uint8_t rx;
 
 	record_index = 0;
 	sample_step =0;
@@ -206,10 +209,19 @@ void test_adc(){
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_array[0], 3);
 	DMA1_Channel1->CCR &= ~DMA_CCR_HTIE;	// disables half transfer interrupt
+	recording = true;
 	HAL_TIM_Base_Start(&htim1);
 
 
-	while(1){}
+	while(recording);
+	HAL_UART_Transmit(&huart2, record_phase_a, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Receive(&huart2, &rx, 1, 1000);
+	HAL_UART_Transmit(&huart2, record_phase_b, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Receive(&huart2, &rx, 1, 1000);
+	HAL_UART_Transmit(&huart2, record_phase_c, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Receive(&huart2, &rx, 1, 1000);
+	HAL_UART_Transmit(&huart2, record_step, N_RECORD_SAMPLES, 1000);
+	while(true);
 }
 
 /* USER CODE END 0 */
@@ -445,7 +457,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 38400;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;

@@ -15,9 +15,9 @@ def ParseBuffer(buffer, sub_fmt, n_samples):
     return result
 
 
-N_REVS = 2
-N_STEP = 6
-N_SAMPLES_PER_STEP = 20
+N_REVS = 1
+N_STEP = 2
+N_SAMPLES_PER_STEP = 1000
 N_RECORD_SAMPLES = N_REVS*N_STEP*N_SAMPLES_PER_STEP
 N_RECORD_SAMPLE_SIZE_BYTES = 2
 

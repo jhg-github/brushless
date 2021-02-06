@@ -64,7 +64,7 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void reset_all(){
+static inline void reset_all(){
 	HAL_GPIO_WritePin(DIAG_EN_GPIO_Port, DIAG_EN_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
@@ -74,7 +74,7 @@ void reset_all(){
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_RESET);
 }
 
-void step1(){
+static inline void step1(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_RESET);
@@ -82,7 +82,7 @@ void step1(){
 	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_RESET);
 }
-void step2(){
+static inline void step2(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_RESET);
@@ -90,7 +90,7 @@ void step2(){
 	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_SET);
 }
-void step3(){
+static inline void step3(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_RESET);
@@ -98,7 +98,7 @@ void step3(){
 	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_SET);
 }
-void step4(){
+static inline void step4(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_RESET);
@@ -106,7 +106,7 @@ void step4(){
 	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_RESET);
 }
-void step5(){
+static inline void step5(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_SET);
@@ -114,7 +114,7 @@ void step5(){
 	HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, GPIO_PIN_SET);
 }
-void step6(){
+static inline void step6(){
 	HAL_GPIO_WritePin(IN1_GPIO_Port, IN1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN2_GPIO_Port, IN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(IN3_GPIO_Port, IN3_Pin, GPIO_PIN_SET);
@@ -125,7 +125,7 @@ void step6(){
 
 
 //void test_steps(){
-//	uint32_t delay = 1;
+//	uint32_t delay = 100;
 //	reset_all();
 //	HAL_Delay(delay);
 //	HAL_GPIO_WritePin(DIAG_EN_GPIO_Port, DIAG_EN_Pin, GPIO_PIN_SET);
@@ -142,15 +142,56 @@ void step6(){
 //	step4();HAL_Delay(delay);
 //	step5();HAL_Delay(delay);
 //	step6();HAL_Delay(delay);
+//
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+////
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+////
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+////	step1();HAL_Delay(delay);
+////	step2();HAL_Delay(delay);
+////	step3();HAL_Delay(delay);
+////	step4();HAL_Delay(delay);
+////	step5();HAL_Delay(delay);
+////	step6();HAL_Delay(delay);
+//
 //	reset_all();
 //	while(1){}
 //}
 
 typedef void (*step_function)(void);
 
-#define N_REVS (2U)
-#define N_STEP (6U)
-#define N_SAMPLES_PER_STEP (20U)
+
+#define N_REVS (1U)
+#define N_STEP (2U)
+#define N_SAMPLES_PER_STEP (1000U)
 #define N_RECORD_SAMPLES (N_REVS*N_STEP*N_SAMPLES_PER_STEP)
 __IO uint16_t adc_array[3];
 __IO uint16_t record_phase_a[N_RECORD_SAMPLES];
@@ -159,11 +200,16 @@ __IO uint16_t record_phase_c[N_RECORD_SAMPLES];
 __IO uint8_t record_step[N_RECORD_SAMPLES];
 __IO uint16_t record_index;
 __IO uint8_t step_index;
-__IO uint8_t sample_step;
+__IO uint16_t sample_step;
 __IO bool recording;
+
+step_function steps_array[] = {step1,step2, step3, step4, step5,step6};
+
 
 void DMA1_Channel1_IRQHandler(void)
 {
+	step_function func_p;
+
 	HAL_GPIO_WritePin(DEBUG_PIN_GPIO_Port, DEBUG_PIN_Pin, GPIO_PIN_SET);
 
 	record_phase_a[record_index] = adc_array[0];
@@ -185,6 +231,8 @@ void DMA1_Channel1_IRQHandler(void)
 		if(step_index >=N_STEP){
 			step_index=0;
 		}
+		func_p = steps_array[step_index];
+		func_p();
 	}
 
 	DMA1->IFCR = DMA_IFCR_CTCIF1;
@@ -204,23 +252,25 @@ void test_adc(){
 
 	HAL_Delay(delay);
 	HAL_GPIO_WritePin(DIAG_EN_GPIO_Port, DIAG_EN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIO_BEMF_GPIO_Port, GPIO_BEMF_Pin, GPIO_PIN_RESET);
 	HAL_Delay(delay);
 
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_array[0], 3);
 	DMA1_Channel1->CCR &= ~DMA_CCR_HTIE;	// disables half transfer interrupt
 	recording = true;
+	step1();
 	HAL_TIM_Base_Start(&htim1);
 
 
 	while(recording);
-	HAL_UART_Transmit(&huart2, record_phase_a, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)record_phase_a, N_RECORD_SAMPLES*2, 1000);
 	HAL_UART_Receive(&huart2, &rx, 1, 1000);
-	HAL_UART_Transmit(&huart2, record_phase_b, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)record_phase_b, N_RECORD_SAMPLES*2, 1000);
 	HAL_UART_Receive(&huart2, &rx, 1, 1000);
-	HAL_UART_Transmit(&huart2, record_phase_c, N_RECORD_SAMPLES*2, 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)record_phase_c, N_RECORD_SAMPLES*2, 1000);
 	HAL_UART_Receive(&huart2, &rx, 1, 1000);
-	HAL_UART_Transmit(&huart2, record_step, N_RECORD_SAMPLES, 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)record_step, N_RECORD_SAMPLES, 1000);
 	while(true);
 }
 
@@ -260,7 +310,7 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
-  //test_steps();
+//  test_steps();
   test_adc();
 
   /* USER CODE END 2 */
@@ -514,7 +564,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, LD2_Pin|DEBUG_PIN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, EN1_Pin|EN2_Pin|EN3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_BEMF_Pin|EN1_Pin|EN2_Pin|EN3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -536,8 +586,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : EN1_Pin EN2_Pin EN3_Pin */
-  GPIO_InitStruct.Pin = EN1_Pin|EN2_Pin|EN3_Pin;
+  /*Configure GPIO pins : GPIO_BEMF_Pin EN1_Pin EN2_Pin EN3_Pin */
+  GPIO_InitStruct.Pin = GPIO_BEMF_Pin|EN1_Pin|EN2_Pin|EN3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

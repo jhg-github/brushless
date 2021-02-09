@@ -189,9 +189,9 @@ static inline void step6(){
 typedef void (*step_function)(void);
 
 
-#define N_REVS (1U)
-#define N_STEP (2U)
-#define N_SAMPLES_PER_STEP (1000U)
+#define N_REVS (2U)
+#define N_STEP (6U)
+#define N_SAMPLES_PER_STEP (100U)
 #define N_RECORD_SAMPLES (N_REVS*N_STEP*N_SAMPLES_PER_STEP)
 __IO uint16_t adc_array[3];
 __IO uint16_t record_phase_a[N_RECORD_SAMPLES];
@@ -254,6 +254,9 @@ void test_adc(){
 	HAL_GPIO_WritePin(DIAG_EN_GPIO_Port, DIAG_EN_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIO_BEMF_GPIO_Port, GPIO_BEMF_Pin, GPIO_PIN_RESET);
 	HAL_Delay(delay);
+
+	step6();
+	HAL_Delay(10);
 
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_array[0], 3);
@@ -401,7 +404,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_TRGO;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 3;
+  hadc1.Init.NbrOfConversion = 4;
   hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
@@ -434,6 +437,14 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = ADC_REGULAR_RANK_3;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();

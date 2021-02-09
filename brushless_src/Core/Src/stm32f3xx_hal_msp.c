@@ -102,6 +102,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**ADC1 GPIO Configuration
     PC3     ------> ADC1_IN9
+    PA1     ------> ADC1_IN2
     PA7     ------> ADC1_IN15
     PB0     ------> ADC1_IN11
     */
@@ -110,10 +111,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(BEMF1_GPIO_Port, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = BEMF3_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_1|BEMF3_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BEMF3_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = BEMF2_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -162,12 +163,13 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 
     /**ADC1 GPIO Configuration
     PC3     ------> ADC1_IN9
+    PA1     ------> ADC1_IN2
     PA7     ------> ADC1_IN15
     PB0     ------> ADC1_IN11
     */
     HAL_GPIO_DeInit(BEMF1_GPIO_Port, BEMF1_Pin);
 
-    HAL_GPIO_DeInit(BEMF3_GPIO_Port, BEMF3_Pin);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_1|BEMF3_Pin);
 
     HAL_GPIO_DeInit(BEMF2_GPIO_Port, BEMF2_Pin);
 

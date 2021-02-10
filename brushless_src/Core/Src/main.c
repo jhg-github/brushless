@@ -198,6 +198,7 @@ __IO uint16_t record_phase_a[N_RECORD_SAMPLES];
 __IO uint16_t record_phase_b[N_RECORD_SAMPLES];
 __IO uint16_t record_phase_c[N_RECORD_SAMPLES];
 __IO uint8_t record_step[N_RECORD_SAMPLES];
+__IO uint16_t record_vbus[N_RECORD_SAMPLES];
 __IO uint16_t record_index;
 __IO uint8_t step_index;
 __IO uint16_t sample_step;
@@ -215,7 +216,8 @@ void DMA1_Channel1_IRQHandler(void)
 	record_phase_a[record_index] = adc_array[0];
 	record_phase_b[record_index] = adc_array[1];
 	record_phase_c[record_index] = adc_array[2];
-	record_step[record_index] = step_index;
+	//record_step[record_index] = step_index;
+	record_vbus[record_index] = adc_array[3];
 
 	record_index++;
 	if(record_index >= N_RECORD_SAMPLES){
@@ -259,7 +261,7 @@ void test_adc(){
 	HAL_Delay(10);
 
 
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_array[0], 3);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_array[0], 4);
 	DMA1_Channel1->CCR &= ~DMA_CCR_HTIE;	// disables half transfer interrupt
 	recording = true;
 	step1();
@@ -273,7 +275,8 @@ void test_adc(){
 	HAL_UART_Receive(&huart2, &rx, 1, 1000);
 	HAL_UART_Transmit(&huart2, (uint8_t *)record_phase_c, N_RECORD_SAMPLES*2, 1000);
 	HAL_UART_Receive(&huart2, &rx, 1, 1000);
-	HAL_UART_Transmit(&huart2, (uint8_t *)record_step, N_RECORD_SAMPLES, 1000);
+	//HAL_UART_Transmit(&huart2, (uint8_t *)record_step, N_RECORD_SAMPLES, 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t *)record_vbus, N_RECORD_SAMPLES*2, 1000);
 	while(true);
 }
 

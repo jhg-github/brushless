@@ -41,25 +41,45 @@ ser.write(1)    # acknowledge
 print("READING BEMF C")
 serBuffer_bemf_c = ser.read(N_RECORD_SAMPLES * N_RECORD_SAMPLE_SIZE_BYTES)
 print('READING BEMF C BYTES:', len(serBuffer_bemf_c))
+# ser.write(1)    # acknowledge
+# print("READING STEPS")
+# serBuffer_steps = ser.read(N_RECORD_SAMPLES)
+# print('READING STEPS BYTES:', len(serBuffer_steps))
 ser.write(1)    # acknowledge
-print("READING STEPS")
-serBuffer_steps = ser.read(N_RECORD_SAMPLES)
-print('READING STEPS BYTES:', len(serBuffer_steps))
+print("READING VBUS")
+serBuffer_vbus = ser.read(N_RECORD_SAMPLES * N_RECORD_SAMPLE_SIZE_BYTES)
+print('READING VBUS BYTES:', len(serBuffer_vbus))
+
 
 
 bemf_a = ParseBuffer(serBuffer_bemf_a, '<H', N_RECORD_SAMPLES)
 bemf_b = ParseBuffer(serBuffer_bemf_b, '<H', N_RECORD_SAMPLES)
 bemf_c = ParseBuffer(serBuffer_bemf_c, '<H', N_RECORD_SAMPLES)
-steps = ParseBuffer(serBuffer_steps, '<B', N_RECORD_SAMPLES)
+# steps = ParseBuffer(serBuffer_steps, '<B', N_RECORD_SAMPLES)
+vbus = ParseBuffer(serBuffer_vbus, '<H', N_RECORD_SAMPLES)
 
+
+bemf_a_v_tmp = [ (i*3.3/4096) for i in bemf_a]
+bemf_a_v = [ ((i-0.3)*12.2/2.2)+0.3 for i in bemf_a_v_tmp]
+bemf_b_v_tmp = [ (i*3.3/4096) for i in bemf_b]
+bemf_b_v = [ ((i-0.3)*12.2/2.2)+0.3 for i in bemf_b_v_tmp]
+bemf_c_v_tmp = [ (i*3.3/4096) for i in bemf_c]
+bemf_c_v = [ ((i-0.3)*12.2/2.2)+0.3 for i in bemf_c_v_tmp]
+vbus_mid_v_tmp = [ (i*3.3/4096) for i in vbus]
+vbus_mid_v = [ i*(169+9.31)/9.31/2 for i in vbus_mid_v_tmp]
 
 
 t = [ i/FS for i in range(len(bemf_a))]
 
-plt.plot(t,bemf_a, label='BEMF A')
-plt.plot(t,bemf_b, label='BEMF B')
-plt.plot(t,bemf_c, label='BEMF C')
-# plt.plot(t,steps, label='Steps')
+# plt.plot(t,bemf_a, label='BEMF A')
+# plt.plot(t,bemf_b, label='BEMF B')
+# plt.plot(t,bemf_c, label='BEMF C')
+# # plt.plot(t,steps, label='Steps')
+# plt.plot(t,vbus, label='VBUS')
+plt.plot(t,bemf_a_v, label='BEMF A [V]')
+plt.plot(t,bemf_b_v, label='BEMF B [V]')
+plt.plot(t,bemf_c_v, label='BEMF C [V]')
+plt.plot(t,vbus_mid_v, label='VBUS MIDDLE [V]')
 plt.tight_layout()
 plt.legend()
 plt.grid()
